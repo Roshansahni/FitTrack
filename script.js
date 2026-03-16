@@ -207,10 +207,108 @@ function runMacroCalculations() {
     const fats = calculateFats(goalCalories);
     const totalMacroCal = calculateTotalMacroCalories(protein.calories, carbs.calories, fats.calories);
 
-    document.getElementById('protein-result').textContent = `${protein.grams}g (${protein.calories} kcal)`;
-    document.getElementById('carbs-result').textContent = `${carbs.grams}g (${carbs.calories} kcal)`;
-    document.getElementById('fats-result').textContent = `${fats.grams}g (${fats.calories} kcal)`;
-    document.getElementById('total-macro-result').textContent = `${totalMacroCal} kcal`;
+    document.getElementById('protein-result').textContent = `${protein.grams}g · ${protein.calories} kcal`;
+    document.getElementById('carbs-result').textContent = `${carbs.grams}g · ${carbs.calories} kcal`;
+    document.getElementById('fats-result').textContent = `${fats.grams}g · ${fats.calories} kcal`;
+    document.getElementById('donut-total-kcal').textContent = totalMacroCal;
+
+    renderMacrosPieChart(protein.calories, carbs.calories, fats.calories);
+}
+
+// ========================================
+// DONUT PIE CHART RENDERING
+// ========================================
+
+const DONUT_RADIUS = 80;
+const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
+
+function animateDonut(arcEl, segmentLength, offset, delay) {
+    arcEl.style.strokeDasharray = `${segmentLength} ${DONUT_CIRCUMFERENCE}`;
+    arcEl.style.strokeDashoffset = `${DONUT_CIRCUMFERENCE}`;
+    arcEl.style.transition = 'none';
+
+    // Force reflow
+    arcEl.getBoundingClientRect();
+
+    requestAnimationFrame(() => {
+        arcEl.style.transition = `stroke-dashoffset 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}s`;
+        arcEl.style.strokeDashoffset = `${offset}`;
+    });
+}
+
+function renderMacrosPieChart(proteinCal, carbsCal, fatsCal) {
+    const total = proteinCal + carbsCal + fatsCal;
+    if (total === 0) return;
+
+    const proteinFrac = proteinCal / total;
+    const carbsFrac = carbsCal / total;
+    const fatsFrac = fatsCal / total;
+
+    const gap = 10;
+    const usable = DONUT_CIRCUMFERENCE - gap * 3;
+
+    const proteinLen = usable * proteinFrac;
+    const carbsLen = usable * carbsFrac;
+    const fatsLen = usable * fatsFrac;
+
+    // Protein arc
+    const arcProtein = document.getElementById('arc-protein');
+    const proteinOffset = DONUT_CIRCUMFERENCE - proteinLen;
+    animateDonut(arcProtein, proteinLen, proteinOffset, 0);
+
+    // Carbs arc
+    const arcCarbs = document.getElementById('arc-carbs');
+    const carbsRotation = proteinLen + gap;
+    animateDonut(arcCarbs, carbsLen, DONUT_CIRCUMFERENCE - carbsLen, 0.15);
+    arcCarbs.style.transform = `rotate(${(carbsRotation / DONUT_CIRCUMFERENCE) * 360}deg)`;
+    arcCarbs.style.transformOrigin = '100px 100px';
+
+    // Fats arc
+    const arcFats = document.getElementById('arc-fats');
+    const fatsRotation = proteinLen + carbsLen + gap * 2;
+    animateDonut(arcFats, fatsLen, DONUT_CIRCUMFERENCE - fatsLen, 0.3);
+    arcFats.style.transform = `rotate(${(fatsRotation / DONUT_CIRCUMFERENCE) * 360}deg)`;
+    arcFats.style.transformOrigin = '100px 100px';
+}
+
+function renderMealPieChart(proteinG, carbsG, fatsG) {
+    const total = proteinG + carbsG + fatsG;
+
+    const arcProtein = document.getElementById('arc-meal-protein');
+    const arcCarbs = document.getElementById('arc-meal-carbs');
+    const arcFats = document.getElementById('arc-meal-fats');
+
+    if (total === 0) {
+        [arcProtein, arcCarbs, arcFats].forEach(arc => {
+            arc.style.strokeDasharray = `0 ${DONUT_CIRCUMFERENCE}`;
+            arc.style.strokeDashoffset = `${DONUT_CIRCUMFERENCE}`;
+            arc.style.transform = '';
+        });
+        return;
+    }
+
+    const proteinFrac = proteinG / total;
+    const carbsFrac = carbsG / total;
+    const fatsFrac = fatsG / total;
+
+    const gap = 10;
+    const usable = DONUT_CIRCUMFERENCE - gap * 3;
+
+    const proteinLen = usable * proteinFrac;
+    const carbsLen = usable * carbsFrac;
+    const fatsLen = usable * fatsFrac;
+
+    animateDonut(arcProtein, proteinLen, DONUT_CIRCUMFERENCE - proteinLen, 0);
+
+    const carbsRotation = proteinLen + gap;
+    animateDonut(arcCarbs, carbsLen, DONUT_CIRCUMFERENCE - carbsLen, 0.1);
+    arcCarbs.style.transform = `rotate(${(carbsRotation / DONUT_CIRCUMFERENCE) * 360}deg)`;
+    arcCarbs.style.transformOrigin = '100px 100px';
+
+    const fatsRotation = proteinLen + carbsLen + gap * 2;
+    animateDonut(arcFats, fatsLen, DONUT_CIRCUMFERENCE - fatsLen, 0.2);
+    arcFats.style.transform = `rotate(${(fatsRotation / DONUT_CIRCUMFERENCE) * 360}deg)`;
+    arcFats.style.transformOrigin = '100px 100px';
 }
 
 // ---- Meal Calculator ----
@@ -281,6 +379,9 @@ function updateMealDisplay() {
     document.getElementById('total-fiber').textContent = `${totalFiber.toFixed(1)}g`;
     document.getElementById('total-vitamin-c').textContent = `${totalVitaminC.toFixed(1)}mg`;
     document.getElementById('total-iron').textContent = `${totalIron.toFixed(1)}mg`;
+    document.getElementById('meal-donut-kcal').textContent = Math.round(totalCalories);
+
+    renderMealPieChart(totalProtein, totalCarbs, totalFats);
 }
 
 function removeFood(index) {
@@ -597,7 +698,6 @@ function initSidebar() {
         overlay.classList.remove('active');
     });
 
-    // Close sidebar on nav link click (mobile)
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
             if (window.innerWidth <= 768) {
@@ -608,7 +708,7 @@ function initSidebar() {
     });
 }
 
-// ---- Scroll Spy for sidebar active state ----
+// ---- Scroll Spy ----
 
 function initScrollSpy() {
     const sections = document.querySelectorAll('.section');
@@ -630,11 +730,11 @@ function initScrollSpy() {
     sections.forEach(section => observer.observe(section));
 }
 
-// ---- Scroll Reveal Animations ----
+// ---- Scroll Reveal ----
 
 function initScrollReveal() {
     const reveals = document.querySelectorAll('.reveal');
-    const grids = document.querySelectorAll('.stats-grid, .macros-grid');
+    const grids = document.querySelectorAll('.stats-grid');
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -645,7 +745,7 @@ function initScrollReveal() {
         });
     }, {
         threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        rootMargin: '0px 0px -40px 0px'
     });
 
     reveals.forEach(el => observer.observe(el));
@@ -667,12 +767,10 @@ function initScrollReveal() {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Load user data and run calculations
     loadUserData();
     runCalculations();
     runMacroCalculations();
 
-    // Event listeners
     document.getElementById('user-form').addEventListener('submit', saveUserData);
     document.getElementById('food-form').addEventListener('submit', addFood);
     document.getElementById('food-name').addEventListener('input', autoFillMacros);
@@ -680,7 +778,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('generate-plan-btn').addEventListener('click', generateDietPlan);
     document.getElementById('generate-workout-btn').addEventListener('click', generateWorkoutPlan);
 
-    // UI
     initSidebar();
     initScrollSpy();
     initScrollReveal();
