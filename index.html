@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTrack — Smart Fitness & Nutrition Tracker</title>
+    <meta name="description" content="Track your fitness goals, calculate macros, generate diet & workout plans — all in one premium dashboard.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar" class="sidebar">
+        <div class="sidebar-logo">
+            <i class="fas fa-bolt"></i>
+            <span>FitTrack</span>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="#profile-section" class="nav-link active" data-section="profile-section"><i class="fas fa-user-circle"></i><span>Profile</span></a></li>
+            <li><a href="#stats-section" class="nav-link" data-section="stats-section"><i class="fas fa-heartbeat"></i><span>Health Stats</span></a></li>
+            <li><a href="#macros-section" class="nav-link" data-section="macros-section"><i class="fas fa-chart-pie"></i><span>Macros</span></a></li>
+            <li><a href="#meal-section" class="nav-link" data-section="meal-section"><i class="fas fa-utensils"></i><span>Meal Tracker</span></a></li>
+            <li><a href="#diet-section" class="nav-link" data-section="diet-section"><i class="fas fa-apple-alt"></i><span>Diet Plan</span></a></li>
+            <li><a href="#workout-section" class="nav-link" data-section="workout-section"><i class="fas fa-dumbbell"></i><span>Workout</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Mobile Header Bar -->
+    <div class="mobile-header">
+        <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="mobile-logo">
+            <i class="fas fa-bolt"></i>
+            <span>FitTrack</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Header -->
+        <header id="hero-header" class="hero">
+            <div class="hero-content reveal">
+                <div class="hero-badge">✨ Your Fitness Command Center</div>
+                <h1>Count Smart.<br><span class="gradient-text">Eat Clean.</span><br>Get Lean.</h1>
+                <p class="hero-subtitle">Track macros, generate custom diet & workout plans, and crush your fitness goals — all from one beautiful dashboard.</p>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-ring ring-1"></div>
+                <div class="hero-ring ring-2"></div>
+                <div class="hero-ring ring-3"></div>
+                <div class="hero-icon-center">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Profile Section -->
+        <section id="profile-section" class="section reveal">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-user-circle"></i></div>
+                <div>
+                    <h2>Your Profile</h2>
+                    <p class="section-subtitle">Set your body stats and fitness goals</p>
+                </div>
+            </div>
+            <div class="glass-card">
+                <form id="user-form" class="profile-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="age"><i class="fas fa-calendar-alt"></i> Age</label>
+                            <input type="number" id="age" name="age" min="1" max="120" placeholder="e.g. 25" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender"><i class="fas fa-venus-mars"></i> Gender</label>
+                            <select id="gender" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="height"><i class="fas fa-ruler-vertical"></i> Height (cm)</label>
+                            <input type="number" id="height" name="height" min="50" max="250" step="0.1" placeholder="e.g. 175" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight"><i class="fas fa-weight-hanging"></i> Weight (kg)</label>
+                            <input type="number" id="weight" name="weight" min="20" max="300" step="0.1" placeholder="e.g. 70" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="target-weight"><i class="fas fa-bullseye"></i> Target Weight (kg)</label>
+                            <input type="number" id="target-weight" name="target-weight" min="20" max="300" step="0.1" placeholder="e.g. 65" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="goal"><i class="fas fa-flag-checkered"></i> Goal</label>
+                            <select id="goal" name="goal" required>
+                                <option value="">Select Goal</option>
+                                <option value="fat-loss">Fat Loss</option>
+                                <option value="muscle-gain">Muscle Gain</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity"><i class="fas fa-running"></i> Activity Level</label>
+                            <select id="activity" name="activity" required>
+                                <option value="">Select Activity Level</option>
+                                <option value="sedentary">Sedentary</option>
+                                <option value="light">Light</option>
+                                <option value="moderate">Moderate</option>
+                                <option value="active">Active</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-leaf"></i> Diet Type</label>
+                            <div class="diet-toggle">
+                                <input type="radio" id="veg" name="diet-type" value="veg" required>
+                                <label for="veg" class="toggle-btn"><i class="fas fa-seedling"></i> Veg</label>
+                                <input type="radio" id="non-veg" name="diet-type" value="non-veg" required>
+                                <label for="non-veg" class="toggle-btn"><i class="fas fa-drumstick-bite"></i> Non-Veg</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" id="save-profile-btn">
+                        <i class="fas fa-save"></i> Save Profile
+                    </button>
+                </form>
+                <p id="save-message" class="save-msg"></p>
+            </div>
+        </section>
+
+        <!-- Health Stats Section -->
+        <section id="stats-section" class="section reveal">
+            <div class="section-header">
+                <div class="section-icon pulse"><i class="fas fa-heartbeat"></i></div>
+                <div>
+                    <h2>Health Stats</h2>
+                    <p class="section-subtitle">Your calculated health metrics</p>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card glass-card" id="stat-bmr">
+                    <div class="stat-icon-wrap"><i class="fas fa-fire-flame-curved"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">BMR</span>
+                        <span class="stat-value" id="bmr-result">—</span>
+                    </div>
+                </div>
+                <div class="stat-card glass-card" id="stat-maintenance">
+                    <div class="stat-icon-wrap accent-green"><i class="fas fa-utensils"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Maintenance</span>
+                        <span class="stat-value" id="maintenance-result">—</span>
+                    </div>
+                </div>
+                <div class="stat-card glass-card" id="stat-goal-cal">
+                    <div class="stat-icon-wrap accent-violet"><i class="fas fa-bullseye"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Goal Calories</span>
+                        <span class="stat-value" id="goal-result">—</span>
+                    </div>
+                </div>
+                <div class="stat-card glass-card" id="stat-bmi">
+                    <div class="stat-icon-wrap accent-coral"><i class="fas fa-weight-scale"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">BMI</span>
+                        <span class="stat-value" id="bmi-result">—</span>
+                    </div>
+                </div>
+                <div class="stat-card glass-card" id="stat-bodyfat">
+                    <div class="stat-icon-wrap accent-amber"><i class="fas fa-percent"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Body Fat</span>
+                        <span class="stat-value" id="bodyfat-result">—</span>
+                    </div>
+                </div>
+                <div class="stat-card glass-card" id="stat-time">
+                    <div class="stat-icon-wrap accent-cyan"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Goal ETA</span>
+                        <span class="stat-value" id="time-result">—</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Daily Macros Section -->
+        <section id="macros-section" class="section reveal">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-chart-pie"></i></div>
+                <div>
+                    <h2>Daily Macros</h2>
+                    <p class="section-subtitle">Your optimal macronutrient breakdown</p>
+                </div>
+            </div>
+            <div class="macros-grid">
+                <div class="macro-card glass-card macro-protein">
+                    <div class="macro-top">
+                        <i class="fas fa-drumstick-bite"></i>
+                        <span class="macro-label">Protein</span>
+                    </div>
+                    <span class="macro-value" id="protein-result">—</span>
+                </div>
+                <div class="macro-card glass-card macro-carbs">
+                    <div class="macro-top">
+                        <i class="fas fa-bread-slice"></i>
+                        <span class="macro-label">Carbs</span>
+                    </div>
+                    <span class="macro-value" id="carbs-result">—</span>
+                </div>
+                <div class="macro-card glass-card macro-fats">
+                    <div class="macro-top">
+                        <i class="fas fa-cheese"></i>
+                        <span class="macro-label">Fats</span>
+                    </div>
+                    <span class="macro-value" id="fats-result">—</span>
+                </div>
+                <div class="macro-card glass-card macro-total">
+                    <div class="macro-top">
+                        <i class="fas fa-calculator"></i>
+                        <span class="macro-label">Total Calories</span>
+                    </div>
+                    <span class="macro-value" id="total-macro-result">—</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Meal Calculator Section -->
+        <section id="meal-section" class="section reveal">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-utensils"></i></div>
+                <div>
+                    <h2>Meal Tracker</h2>
+                    <p class="section-subtitle">Log foods and track macro & micro nutrients</p>
+                </div>
+            </div>
+            <div class="glass-card">
+                <form id="food-form" class="meal-form">
+                    <div class="form-grid meal-grid">
+                        <div class="form-group">
+                            <label for="food-name"><i class="fas fa-apple-alt"></i> Food Name</label>
+                            <input type="text" id="food-name" placeholder="e.g. rolled oats" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity"><i class="fas fa-balance-scale"></i> Quantity (g)</label>
+                            <input type="number" id="quantity" min="1" step="0.1" placeholder="e.g. 100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="calories-per-100"><i class="fas fa-fire"></i> Cal / 100g</label>
+                            <input type="number" id="calories-per-100" min="0" step="0.1" placeholder="Auto-fill" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="protein-per-100"><i class="fas fa-drumstick-bite"></i> Protein / 100g</label>
+                            <input type="number" id="protein-per-100" min="0" step="0.1" placeholder="g" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="carbs-per-100"><i class="fas fa-bread-slice"></i> Carbs / 100g</label>
+                            <input type="number" id="carbs-per-100" min="0" step="0.1" placeholder="g" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fats-per-100"><i class="fas fa-cheese"></i> Fats / 100g</label>
+                            <input type="number" id="fats-per-100" min="0" step="0.1" placeholder="g" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fiber-per-100"><i class="fas fa-leaf"></i> Fiber / 100g</label>
+                            <input type="number" id="fiber-per-100" min="0" step="0.1" placeholder="g">
+                        </div>
+                        <div class="form-group">
+                            <label for="vitamin-c-per-100"><i class="fas fa-lemon"></i> Vitamin C / 100g</label>
+                            <input type="number" id="vitamin-c-per-100" min="0" step="0.1" placeholder="mg">
+                        </div>
+                        <div class="form-group">
+                            <label for="iron-per-100"><i class="fas fa-magnet"></i> Iron / 100g</label>
+                            <input type="number" id="iron-per-100" min="0" step="0.1" placeholder="mg">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" id="add-food-btn">
+                        <i class="fas fa-plus-circle"></i> Add Food
+                    </button>
+                </form>
+
+                <div id="meal-list" class="meal-list">
+                    <h3><i class="fas fa-clipboard-list"></i> Added Foods</h3>
+                    <ul id="food-items"></ul>
+                </div>
+
+                <div id="meal-totals" class="meal-totals glass-card-inner">
+                    <h3><i class="fas fa-chart-bar"></i> Meal Total</h3>
+                    <div class="totals-grid">
+                        <div class="total-item"><span class="total-label">Calories</span><span class="total-val" id="total-calories">0 kcal</span></div>
+                        <div class="total-item"><span class="total-label">Protein</span><span class="total-val" id="total-protein">0g</span></div>
+                        <div class="total-item"><span class="total-label">Carbs</span><span class="total-val" id="total-carbs">0g</span></div>
+                        <div class="total-item"><span class="total-label">Fats</span><span class="total-val" id="total-fats">0g</span></div>
+                        <div class="total-item"><span class="total-label">Fiber</span><span class="total-val" id="total-fiber">0g</span></div>
+                        <div class="total-item"><span class="total-label">Vitamin C</span><span class="total-val" id="total-vitamin-c">0mg</span></div>
+                        <div class="total-item"><span class="total-label">Iron</span><span class="total-val" id="total-iron">0mg</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diet Plan Section -->
+        <section id="diet-section" class="section reveal">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-apple-alt"></i></div>
+                <div>
+                    <h2>Diet Plan Generator</h2>
+                    <p class="section-subtitle">Personalized meal plan based on your goals</p>
+                </div>
+            </div>
+            <div class="glass-card">
+                <button id="generate-plan-btn" class="btn-primary btn-generate">
+                    <i class="fas fa-magic"></i> Generate Diet Plan
+                </button>
+                <div id="diet-plan-output" class="plan-output"></div>
+            </div>
+        </section>
+
+        <!-- Workout Plan Section -->
+        <section id="workout-section" class="section reveal">
+            <div class="section-header">
+                <div class="section-icon"><i class="fas fa-dumbbell"></i></div>
+                <div>
+                    <h2>Workout Plan Generator</h2>
+                    <p class="section-subtitle">Custom weekly workout routine</p>
+                </div>
+            </div>
+            <div class="glass-card">
+                <button id="generate-workout-btn" class="btn-primary btn-generate">
+                    <i class="fas fa-magic"></i> Generate Workout Plan
+                </button>
+                <div id="workout-plan-output" class="plan-output"></div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer id="app-footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-bolt"></i>
+                    <span>FitTrack</span>
+                </div>
+                <p>&copy; Roshansahni </p>
+            </div>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
