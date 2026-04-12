@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <!-- Ambient Background -->
+    <!-- Animated Background -->
     <div class="bg-gradient"></div>
     <div class="bg-grid"></div>
 
@@ -27,6 +27,7 @@
             <li><a href="#meal-section" class="nav-link" data-section="meal-section"><i class="fas fa-utensils"></i><span>Meal Tracker</span></a></li>
             <li><a href="#diet-section" class="nav-link" data-section="diet-section"><i class="fas fa-apple-alt"></i><span>Diet Plan</span></a></li>
             <li><a href="#workout-section" class="nav-link" data-section="workout-section"><i class="fas fa-dumbbell"></i><span>Workout</span></a></li>
+            <li><a href="#" class="nav-link" id="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
         </ul>
     </nav>
 
@@ -197,43 +198,34 @@
                     <p class="section-subtitle">Your optimal macronutrient breakdown</p>
                 </div>
             </div>
-            <div class="glass-card pie-chart-section">
-                <div class="pie-chart-layout">
-                    <div class="donut-wrapper" id="macros-donut-wrapper">
-                        <svg class="donut-chart" viewBox="0 0 200 200" id="macros-donut">
-                            <circle class="donut-bg" cx="100" cy="100" r="80" />
-                            <circle class="donut-arc arc-fats" cx="100" cy="100" r="80" id="arc-fats" />
-                            <circle class="donut-arc arc-carbs" cx="100" cy="100" r="80" id="arc-carbs" />
-                            <circle class="donut-arc arc-protein" cx="100" cy="100" r="80" id="arc-protein" />
-                        </svg>
-                        <div class="donut-center">
-                            <span class="donut-center-value" id="donut-total-kcal">—</span>
-                            <span class="donut-center-label">kcal</span>
-                        </div>
+            <div class="macros-grid">
+                <div class="macro-card glass-card macro-protein">
+                    <div class="macro-top">
+                        <i class="fas fa-drumstick-bite"></i>
+                        <span class="macro-label">Protein</span>
                     </div>
-                    <div class="pie-legend" id="macros-legend">
-                        <div class="legend-item">
-                            <span class="legend-dot dot-protein"></span>
-                            <div class="legend-info">
-                                <span class="legend-name">Protein</span>
-                                <span class="legend-val" id="protein-result">—</span>
-                            </div>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot dot-carbs"></span>
-                            <div class="legend-info">
-                                <span class="legend-name">Carbs</span>
-                                <span class="legend-val" id="carbs-result">—</span>
-                            </div>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot dot-fats"></span>
-                            <div class="legend-info">
-                                <span class="legend-name">Fats</span>
-                                <span class="legend-val" id="fats-result">—</span>
-                            </div>
-                        </div>
+                    <span class="macro-value" id="protein-result">—</span>
+                </div>
+                <div class="macro-card glass-card macro-carbs">
+                    <div class="macro-top">
+                        <i class="fas fa-bread-slice"></i>
+                        <span class="macro-label">Carbs</span>
                     </div>
+                    <span class="macro-value" id="carbs-result">—</span>
+                </div>
+                <div class="macro-card glass-card macro-fats">
+                    <div class="macro-top">
+                        <i class="fas fa-cheese"></i>
+                        <span class="macro-label">Fats</span>
+                    </div>
+                    <span class="macro-value" id="fats-result">—</span>
+                </div>
+                <div class="macro-card glass-card macro-total">
+                    <div class="macro-top">
+                        <i class="fas fa-calculator"></i>
+                        <span class="macro-label">Total Calories</span>
+                    </div>
+                    <span class="macro-value" id="total-macro-result">—</span>
                 </div>
             </div>
         </section>
@@ -299,28 +291,14 @@
 
                 <div id="meal-totals" class="meal-totals glass-card-inner">
                     <h3><i class="fas fa-chart-bar"></i> Meal Total</h3>
-                    <div class="meal-totals-layout">
-                        <div class="donut-wrapper donut-small" id="meal-donut-wrapper">
-                            <svg class="donut-chart" viewBox="0 0 200 200" id="meal-donut">
-                                <circle class="donut-bg" cx="100" cy="100" r="80" />
-                                <circle class="donut-arc arc-meal-fats" cx="100" cy="100" r="80" id="arc-meal-fats" />
-                                <circle class="donut-arc arc-meal-carbs" cx="100" cy="100" r="80" id="arc-meal-carbs" />
-                                <circle class="donut-arc arc-meal-protein" cx="100" cy="100" r="80" id="arc-meal-protein" />
-                            </svg>
-                            <div class="donut-center">
-                                <span class="donut-center-value" id="meal-donut-kcal">0</span>
-                                <span class="donut-center-label">kcal</span>
-                            </div>
-                        </div>
-                        <div class="totals-grid">
-                            <div class="total-item"><span class="total-label">Calories</span><span class="total-val" id="total-calories">0 kcal</span></div>
-                            <div class="total-item"><span class="total-label">Protein</span><span class="total-val" id="total-protein">0g</span></div>
-                            <div class="total-item"><span class="total-label">Carbs</span><span class="total-val" id="total-carbs">0g</span></div>
-                            <div class="total-item"><span class="total-label">Fats</span><span class="total-val" id="total-fats">0g</span></div>
-                            <div class="total-item"><span class="total-label">Fiber</span><span class="total-val" id="total-fiber">0g</span></div>
-                            <div class="total-item"><span class="total-label">Vitamin C</span><span class="total-val" id="total-vitamin-c">0mg</span></div>
-                            <div class="total-item"><span class="total-label">Iron</span><span class="total-val" id="total-iron">0mg</span></div>
-                        </div>
+                    <div class="totals-grid">
+                        <div class="total-item"><span class="total-label">Calories</span><span class="total-val" id="total-calories">0 kcal</span></div>
+                        <div class="total-item"><span class="total-label">Protein</span><span class="total-val" id="total-protein">0g</span></div>
+                        <div class="total-item"><span class="total-label">Carbs</span><span class="total-val" id="total-carbs">0g</span></div>
+                        <div class="total-item"><span class="total-label">Fats</span><span class="total-val" id="total-fats">0g</span></div>
+                        <div class="total-item"><span class="total-label">Fiber</span><span class="total-val" id="total-fiber">0g</span></div>
+                        <div class="total-item"><span class="total-label">Vitamin C</span><span class="total-val" id="total-vitamin-c">0mg</span></div>
+                        <div class="total-item"><span class="total-label">Iron</span><span class="total-val" id="total-iron">0mg</span></div>
                     </div>
                 </div>
             </div>
@@ -367,7 +345,7 @@
                     <i class="fas fa-bolt"></i>
                     <span>FitTrack</span>
                 </div>
-                <p>&copy; Roshansahni </p>
+                <p>&copy; Roshansahni · Built with 💪</p>
             </div>
         </footer>
     </main>

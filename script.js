@@ -2,6 +2,11 @@
 // FITTRACK — Script
 // ========================================
 
+// ---- Auth Check ----
+if (localStorage.getItem('isAuthenticated') !== 'true') {
+    window.location.href = 'login.html';
+}
+
 // ---- User Profile: Load / Save ----
 
 function loadUserData() {
@@ -207,108 +212,10 @@ function runMacroCalculations() {
     const fats = calculateFats(goalCalories);
     const totalMacroCal = calculateTotalMacroCalories(protein.calories, carbs.calories, fats.calories);
 
-    document.getElementById('protein-result').textContent = `${protein.grams}g · ${protein.calories} kcal`;
-    document.getElementById('carbs-result').textContent = `${carbs.grams}g · ${carbs.calories} kcal`;
-    document.getElementById('fats-result').textContent = `${fats.grams}g · ${fats.calories} kcal`;
-    document.getElementById('donut-total-kcal').textContent = totalMacroCal;
-
-    renderMacrosPieChart(protein.calories, carbs.calories, fats.calories);
-}
-
-// ========================================
-// DONUT PIE CHART RENDERING
-// ========================================
-
-const DONUT_RADIUS = 80;
-const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
-
-function animateDonut(arcEl, segmentLength, offset, delay) {
-    arcEl.style.strokeDasharray = `${segmentLength} ${DONUT_CIRCUMFERENCE}`;
-    arcEl.style.strokeDashoffset = `${DONUT_CIRCUMFERENCE}`;
-    arcEl.style.transition = 'none';
-
-    // Force reflow
-    arcEl.getBoundingClientRect();
-
-    requestAnimationFrame(() => {
-        arcEl.style.transition = `stroke-dashoffset 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}s`;
-        arcEl.style.strokeDashoffset = `${offset}`;
-    });
-}
-
-function renderMacrosPieChart(proteinCal, carbsCal, fatsCal) {
-    const total = proteinCal + carbsCal + fatsCal;
-    if (total === 0) return;
-
-    const proteinFrac = proteinCal / total;
-    const carbsFrac = carbsCal / total;
-    const fatsFrac = fatsCal / total;
-
-    const gap = 10;
-    const usable = DONUT_CIRCUMFERENCE - gap * 3;
-
-    const proteinLen = usable * proteinFrac;
-    const carbsLen = usable * carbsFrac;
-    const fatsLen = usable * fatsFrac;
-
-    // Protein arc
-    const arcProtein = document.getElementById('arc-protein');
-    const proteinOffset = DONUT_CIRCUMFERENCE - proteinLen;
-    animateDonut(arcProtein, proteinLen, proteinOffset, 0);
-
-    // Carbs arc
-    const arcCarbs = document.getElementById('arc-carbs');
-    const carbsRotation = proteinLen + gap;
-    animateDonut(arcCarbs, carbsLen, DONUT_CIRCUMFERENCE - carbsLen, 0.15);
-    arcCarbs.style.transform = `rotate(${(carbsRotation / DONUT_CIRCUMFERENCE) * 360}deg)`;
-    arcCarbs.style.transformOrigin = '100px 100px';
-
-    // Fats arc
-    const arcFats = document.getElementById('arc-fats');
-    const fatsRotation = proteinLen + carbsLen + gap * 2;
-    animateDonut(arcFats, fatsLen, DONUT_CIRCUMFERENCE - fatsLen, 0.3);
-    arcFats.style.transform = `rotate(${(fatsRotation / DONUT_CIRCUMFERENCE) * 360}deg)`;
-    arcFats.style.transformOrigin = '100px 100px';
-}
-
-function renderMealPieChart(proteinG, carbsG, fatsG) {
-    const total = proteinG + carbsG + fatsG;
-
-    const arcProtein = document.getElementById('arc-meal-protein');
-    const arcCarbs = document.getElementById('arc-meal-carbs');
-    const arcFats = document.getElementById('arc-meal-fats');
-
-    if (total === 0) {
-        [arcProtein, arcCarbs, arcFats].forEach(arc => {
-            arc.style.strokeDasharray = `0 ${DONUT_CIRCUMFERENCE}`;
-            arc.style.strokeDashoffset = `${DONUT_CIRCUMFERENCE}`;
-            arc.style.transform = '';
-        });
-        return;
-    }
-
-    const proteinFrac = proteinG / total;
-    const carbsFrac = carbsG / total;
-    const fatsFrac = fatsG / total;
-
-    const gap = 10;
-    const usable = DONUT_CIRCUMFERENCE - gap * 3;
-
-    const proteinLen = usable * proteinFrac;
-    const carbsLen = usable * carbsFrac;
-    const fatsLen = usable * fatsFrac;
-
-    animateDonut(arcProtein, proteinLen, DONUT_CIRCUMFERENCE - proteinLen, 0);
-
-    const carbsRotation = proteinLen + gap;
-    animateDonut(arcCarbs, carbsLen, DONUT_CIRCUMFERENCE - carbsLen, 0.1);
-    arcCarbs.style.transform = `rotate(${(carbsRotation / DONUT_CIRCUMFERENCE) * 360}deg)`;
-    arcCarbs.style.transformOrigin = '100px 100px';
-
-    const fatsRotation = proteinLen + carbsLen + gap * 2;
-    animateDonut(arcFats, fatsLen, DONUT_CIRCUMFERENCE - fatsLen, 0.2);
-    arcFats.style.transform = `rotate(${(fatsRotation / DONUT_CIRCUMFERENCE) * 360}deg)`;
-    arcFats.style.transformOrigin = '100px 100px';
+    document.getElementById('protein-result').textContent = `${protein.grams}g (${protein.calories} kcal)`;
+    document.getElementById('carbs-result').textContent = `${carbs.grams}g (${carbs.calories} kcal)`;
+    document.getElementById('fats-result').textContent = `${fats.grams}g (${fats.calories} kcal)`;
+    document.getElementById('total-macro-result').textContent = `${totalMacroCal} kcal`;
 }
 
 // ---- Meal Calculator ----
@@ -379,9 +286,6 @@ function updateMealDisplay() {
     document.getElementById('total-fiber').textContent = `${totalFiber.toFixed(1)}g`;
     document.getElementById('total-vitamin-c').textContent = `${totalVitaminC.toFixed(1)}mg`;
     document.getElementById('total-iron').textContent = `${totalIron.toFixed(1)}mg`;
-    document.getElementById('meal-donut-kcal').textContent = Math.round(totalCalories);
-
-    renderMealPieChart(totalProtein, totalCarbs, totalFats);
 }
 
 function removeFood(index) {
@@ -476,56 +380,61 @@ function generateDietPlan() {
         beforeBed: goalCalories * 0.05
     };
 
-    let plan = '';
+    let planHTML = '<div class="generator-cards-container">';
     let totalCal = 0, totalPro = 0, totalCarb = 0, totalFat = 0;
 
-    plan += '🌅 BREAKFAST\n';
+    const addMealCard = (title, icon, colorClass, foods, targetCal) => {
+        const meal = buildMeal(foods, targetCal);
+        planHTML += `
+            <div class="modern-plan-card">
+                <div class="plan-card-header">
+                    <div class="plan-card-title ${colorClass}"><i class="${icon}"></i> ${title}</div>
+                    <div class="plan-card-badge">${meal.total.cal} kcal</div>
+                </div>
+                ${meal.items}
+                <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); display:flex; gap: 1rem;">
+                    <span><i class="fas fa-drumstick-bite color-green"></i> ${meal.total.pro}g</span>
+                    <span><i class="fas fa-bread-slice color-yellow"></i> ${meal.total.carb}g</span>
+                    <span><i class="fas fa-cheese color-pink"></i> ${meal.total.fat}g</span>
+                </div>
+            </div>`;
+        totalCal += meal.total.cal; totalPro += meal.total.pro; totalCarb += meal.total.carb; totalFat += meal.total.fat;
+    };
+
     const breakfastFoods = dietType === 'non-veg' ? ['rolled oats', 'eggs', 'milk'] : ['rolled oats', 'banana', 'milk'];
-    const breakfast = buildMeal(breakfastFoods, mealCalories.breakfast);
-    plan += breakfast.items;
-    plan += `→ Total: ${breakfast.total.cal} kcal · ${breakfast.total.pro}g P · ${breakfast.total.carb}g C · ${breakfast.total.fat}g F\n\n`;
-    totalCal += breakfast.total.cal; totalPro += breakfast.total.pro; totalCarb += breakfast.total.carb; totalFat += breakfast.total.fat;
+    addMealCard('Breakfast', 'fas fa-sun', 'color-orange', breakfastFoods, mealCalories.breakfast);
 
-    plan += '🥤 BRUNCH\n';
     const brunchFoods = ['apple', 'paneer'];
-    const brunch = buildMeal(brunchFoods, mealCalories.brunch);
-    plan += brunch.items;
-    plan += `→ Total: ${brunch.total.cal} kcal · ${brunch.total.pro}g P · ${brunch.total.carb}g C · ${brunch.total.fat}g F\n\n`;
-    totalCal += brunch.total.cal; totalPro += brunch.total.pro; totalCarb += brunch.total.carb; totalFat += brunch.total.fat;
+    addMealCard('Brunch', 'fas fa-coffee', 'color-yellow', brunchFoods, mealCalories.brunch);
 
-    plan += '🍛 LUNCH\n';
     const lunchFoods = dietType === 'non-veg' ? ['dal', 'rice', 'chicken', 'salad'] : ['dal', 'rice', 'tofu', 'salad'];
-    const lunch = buildMeal(lunchFoods, mealCalories.lunch);
-    plan += lunch.items;
-    plan += `→ Total: ${lunch.total.cal} kcal · ${lunch.total.pro}g P · ${lunch.total.carb}g C · ${lunch.total.fat}g F\n\n`;
-    totalCal += lunch.total.cal; totalPro += lunch.total.pro; totalCarb += lunch.total.carb; totalFat += lunch.total.fat;
+    addMealCard('Lunch', 'fas fa-utensils', 'color-red', lunchFoods, mealCalories.lunch);
 
-    plan += '🥗 DINNER\n';
     const dinnerFoods = ['whole wheat bread', 'paneer', 'salad'];
-    const dinner = buildMeal(dinnerFoods, mealCalories.dinner);
-    plan += dinner.items;
-    plan += `→ Total: ${dinner.total.cal} kcal · ${dinner.total.pro}g P · ${dinner.total.carb}g C · ${dinner.total.fat}g F\n\n`;
-    totalCal += dinner.total.cal; totalPro += dinner.total.pro; totalCarb += dinner.total.carb; totalFat += dinner.total.fat;
+    addMealCard('Dinner', 'fas fa-hamburger', 'color-purple', dinnerFoods, mealCalories.dinner);
 
-    plan += '🌙 BEFORE BED\n';
     const beforeBedFoods = ['turmeric milk'];
-    const beforeBed = buildMeal(beforeBedFoods, mealCalories.beforeBed);
-    plan += beforeBed.items;
-    plan += `→ Total: ${beforeBed.total.cal} kcal · ${beforeBed.total.pro}g P · ${beforeBed.total.carb}g C · ${beforeBed.total.fat}g F\n\n`;
-    totalCal += beforeBed.total.cal; totalPro += beforeBed.total.pro; totalCarb += beforeBed.total.carb; totalFat += beforeBed.total.fat;
+    addMealCard('Before Bed', 'fas fa-moon', 'color-cyan', beforeBedFoods, mealCalories.beforeBed);
 
-    plan += `━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    plan += `📊 DAILY TOTAL\n`;
-    plan += `   Calories: ${Math.round(totalCal)} kcal\n`;
-    plan += `   Protein: ${Math.round(totalPro)}g\n`;
-    plan += `   Carbs: ${Math.round(totalCarb)}g\n`;
-    plan += `   Fat: ${Math.round(totalFat)}g`;
+    planHTML += `
+        <div class="modern-plan-card" style="border-color: var(--accent-cyan); background: rgba(20, 200, 245, 0.05);">
+            <div class="plan-card-header" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+                <div class="plan-card-title"><i class="fas fa-chart-pie color-cyan"></i> Daily Total</div>
+                <div class="plan-card-badge" style="background: var(--accent-cyan); color: #000;">${Math.round(totalCal)} kcal</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top: 1.5rem;">
+                <div style="text-align:center;"><div style="color:var(--text-muted); font-size:0.8rem;">Protein</div><div style="font-weight:600;">${Math.round(totalPro)}g</div></div>
+                <div style="text-align:center;"><div style="color:var(--text-muted); font-size:0.8rem;">Carbs</div><div style="font-weight:600;">${Math.round(totalCarb)}g</div></div>
+                <div style="text-align:center;"><div style="color:var(--text-muted); font-size:0.8rem;">Fats</div><div style="font-weight:600;">${Math.round(totalFat)}g</div></div>
+            </div>
+        </div>
+    </div>`;
 
-    document.getElementById('diet-plan-output').textContent = plan;
+    document.getElementById('diet-plan-output').innerHTML = planHTML;
 }
 
 function buildMeal(foods, targetCal) {
-    let items = '';
+    let items = '<ul class="plan-list">';
     let total = { cal: 0, pro: 0, carb: 0, fat: 0 };
     const portions = foods.map(() => Math.max(50, targetCal / foods.length / 2));
 
@@ -536,9 +445,10 @@ function buildMeal(foods, targetCal) {
         const pro = (data.pro * qty / 100).toFixed(1);
         const carb = (data.carb * qty / 100).toFixed(1);
         const fat = (data.fat * qty / 100).toFixed(1);
-        items += `  • ${food.replace(/^\w/, c => c.toUpperCase())} (${qty}g) — ${cal} kcal, ${pro}g P, ${carb}g C, ${fat}g F\n`;
+        items += `<li><i class="fas fa-circle list-bullet"></i> <span><span class="highlight">${food.replace(/^\w/, c => c.toUpperCase())}</span> (${qty}g) — ${cal} kcal, ${pro}g P, ${carb}g C, ${fat}g F</span></li>`;
         total.cal += parseFloat(cal); total.pro += parseFloat(pro); total.carb += parseFloat(carb); total.fat += parseFloat(fat);
     });
+    items += '</ul>';
     total.cal = Math.round(total.cal); total.pro = Math.round(total.pro); total.carb = Math.round(total.carb); total.fat = Math.round(total.fat);
     return { items, total };
 }
@@ -553,122 +463,93 @@ function generateWorkoutPlan() {
         return;
     }
 
-    let plan = '';
+    let planData = {};
 
     if (goal === 'fat-loss') {
-        plan = `🏃 WEEKLY PLAN — FAT LOSS (Home-Based)
-
-Monday — Cardio Focus
-  • 30 min brisk walking / jogging in place
-  • 3 × 10 bodyweight squats
-  • 3 × 10 push-ups (knee or wall if needed)
-
-Tuesday — Strength
-  • 3 × 12 lunges per leg
-  • 3 × 15 plank holds (20-30s)
-  • 3 × 10 burpees
-
-Wednesday — Cardio Focus
-  • 30 min running / jumping jacks
-  • 3 × 10 mountain climbers
-  • 3 × 15 bicycle crunches
-
-Thursday — Strength
-  • 3 × 12 glute bridges
-  • 3 × 10 pull-ups (assisted / inverted rows)
-  • 3 × 15 leg raises
-
-Friday — HIIT
-  • 30 min intervals (1 min high / 1 min rest)
-  • 3 × 10 jumping squats
-  • 3 × 20 arm circles
-
-Saturday — Full Body
-  • 3 × 10 push-ups
-  • 3 × 12 squats
-  • 3 × 15 planks
-  • 20 min cardio
-
-Sunday — Rest Day 🧘
-  • Light walk or complete rest
-
-💡 Warm up 5 min before each session. Cool down with stretching.`;
+        planData = {
+            title: "FAT LOSS (Home-Based)",
+            icon: "fas fa-fire color-orange",
+            days: [
+                { day: "Monday", focus: "Cardio Focus", exercises: ["30 min brisk walking / jogging in place", "3 × 10 bodyweight squats", "3 × 10 push-ups (knee or wall if needed)"] },
+                { day: "Tuesday", focus: "Strength", exercises: ["3 × 12 lunges per leg", "3 × 15 plank holds (20-30s)", "3 × 10 burpees"] },
+                { day: "Wednesday", focus: "Cardio Focus", exercises: ["30 min running / jumping jacks", "3 × 10 mountain climbers", "3 × 15 bicycle crunches"] },
+                { day: "Thursday", focus: "Strength", exercises: ["3 × 12 glute bridges", "3 × 10 pull-ups (assisted / inverted rows)", "3 × 15 leg raises"] },
+                { day: "Friday", focus: "HIIT", exercises: ["30 min intervals (1 min high / 1 min rest)", "3 × 10 jumping squats", "3 × 20 arm circles"] },
+                { day: "Saturday", focus: "Full Body", exercises: ["3 × 10 push-ups", "3 × 12 squats", "3 × 15 planks", "20 min cardio"] },
+                { day: "Sunday", focus: "Rest Day", exercises: ["Light walk or complete rest"], isRest: true }
+            ],
+            tip: "Warm up 5 min before each session. Cool down with stretching."
+        };
     } else if (goal === 'muscle-gain') {
-        plan = `💪 WEEKLY PLAN — MUSCLE GAIN (Home-Based)
-
-Monday — Upper Body
-  • 3 × 10 push-ups
-  • 3 × 12 pike push-ups
-  • 3 × 15 wall sits
-
-Tuesday — Lower Body
-  • 3 × 12 squats
-  • 3 × 10 lunges per leg
-  • 3 × 15 calf raises
-
-Wednesday — Core
-  • 3 × 20 crunches
-  • 3 × 15 leg raises
-  • 3 × 30s planks
-
-Thursday — Upper Body
-  • 3 × 10 diamond push-ups
-  • 3 × 12 tricep dips (chair)
-  • 3 × 15 shoulder taps
-
-Friday — Lower Body
-  • 3 × 12 glute bridges
-  • 3 × 10 step-ups (stairs)
-  • 3 × 15 donkey kicks per leg
-
-Saturday — Full Body
-  • 3 × 10 burpees
-  • 3 × 12 mountain climbers
-  • 3 × 15 bicycle crunches
-  • 10 min light cardio
-
-Sunday — Rest Day 🧘
-  • Light walk or complete rest
-
-💡 Focus on form. Use weights if available. Eat protein post-workout.`;
+        planData = {
+            title: "MUSCLE GAIN (Home-Based)",
+            icon: "fas fa-dumbbell color-cyan",
+            days: [
+                { day: "Monday", focus: "Upper Body", exercises: ["3 × 10 push-ups", "3 × 12 pike push-ups", "3 × 15 wall sits"] },
+                { day: "Tuesday", focus: "Lower Body", exercises: ["3 × 12 squats", "3 × 10 lunges per leg", "3 × 15 calf raises"] },
+                { day: "Wednesday", focus: "Core", exercises: ["3 × 20 crunches", "3 × 15 leg raises", "3 × 30s planks"] },
+                { day: "Thursday", focus: "Upper Body", exercises: ["3 × 10 diamond push-ups", "3 × 12 tricep dips (chair)", "3 × 15 shoulder taps"] },
+                { day: "Friday", focus: "Lower Body", exercises: ["3 × 12 glute bridges", "3 × 10 step-ups (stairs)", "3 × 15 donkey kicks per leg"] },
+                { day: "Saturday", focus: "Full Body", exercises: ["3 × 10 burpees", "3 × 12 mountain climbers", "3 × 15 bicycle crunches", "10 min light cardio"] },
+                { day: "Sunday", focus: "Rest Day", exercises: ["Light walk or complete rest"], isRest: true }
+            ],
+            tip: "Focus on form. Use weights if available. Eat protein post-workout."
+        };
     } else {
-        plan = `⚖️ WEEKLY PLAN — MAINTENANCE (Home-Based)
-
-Monday — Cardio + Light Strength
-  • 20 min walking / jogging
-  • 3 × 10 bodyweight squats
-  • 3 × 10 push-ups
-
-Tuesday — Strength
-  • 3 × 12 lunges per leg
-  • 3 × 15 plank holds
-
-Wednesday — Cardio
-  • 25 min running / jumping jacks
-  • 3 × 10 burpees
-
-Thursday — Strength
-  • 3 × 12 glute bridges
-  • 3 × 10 pull-ups (assisted)
-
-Friday — Cardio + Core
-  • 20 min interval training
-  • 3 × 20 crunches
-  • 3 × 15 leg raises
-
-Saturday — Full Body
-  • 3 × 10 push-ups
-  • 3 × 12 squats
-  • 3 × 15 planks
-  • 15 min cardio
-
-Sunday — Rest Day 🧘
-  • Light walk or complete rest
-
-💡 Maintain consistency. Adjust based on energy levels.`;
+        planData = {
+            title: "MAINTENANCE (Home-Based)",
+            icon: "fas fa-balance-scale color-green",
+            days: [
+                { day: "Monday", focus: "Cardio + Light Strength", exercises: ["20 min walking / jogging", "3 × 10 bodyweight squats", "3 × 10 push-ups"] },
+                { day: "Tuesday", focus: "Strength", exercises: ["3 × 12 lunges per leg", "3 × 15 plank holds"] },
+                { day: "Wednesday", focus: "Cardio", exercises: ["25 min running / jumping jacks", "3 × 10 burpees"] },
+                { day: "Thursday", focus: "Strength", exercises: ["3 × 12 glute bridges", "3 × 10 pull-ups (assisted)"] },
+                { day: "Friday", focus: "Cardio + Core", exercises: ["20 min interval training", "3 × 20 crunches", "3 × 15 leg raises"] },
+                { day: "Saturday", focus: "Full Body", exercises: ["3 × 10 push-ups", "3 × 12 squats", "3 × 15 planks", "15 min cardio"] },
+                { day: "Sunday", focus: "Rest Day", exercises: ["Light walk or complete rest"], isRest: true }
+            ],
+            tip: "Maintain consistency. Adjust based on energy levels."
+        };
     }
 
-    document.getElementById('workout-plan-output').textContent = plan;
+    let planHTML = `
+        <div style="margin-bottom: 1.5rem; text-align: center;">
+            <div style="display:inline-flex; align-items:center; gap:0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 50px; border: 1px solid var(--border-glass);">
+                <i class="${planData.icon}"></i> <span style="font-weight: 600; color: var(--text-primary);">${planData.title}</span>
+            </div>
+        </div>
+        <div class="generator-cards-container">`;
+
+    planData.days.forEach(d => {
+        let listHTML = '<ul class="plan-list">';
+        d.exercises.forEach(ex => {
+            listHTML += `<li><i class="fas fa-arrow-right list-bullet"></i> <span class="highlight">${ex}</span></li>`;
+        });
+        listHTML += '</ul>';
+
+        planHTML += `
+            <div class="modern-plan-card" ${d.isRest ? 'style="border-color: rgba(255,255,255,0.05); opacity: 0.8;"' : ''}>
+                <div class="plan-card-header">
+                    <div class="plan-card-title ${d.isRest ? 'color-pink' : 'color-cyan'}">
+                        ${d.day} <span style="font-size:0.9rem; font-weight:normal; color:var(--text-muted); margin-left:0.5rem;">— ${d.focus}</span>
+                    </div>
+                    ${d.isRest ? '<i class="fas fa-bed color-pink"></i>' : ''}
+                </div>
+                ${listHTML}
+            </div>
+        `;
+    });
+
+    planHTML += `
+        <div class="modern-plan-card" style="border-color: var(--accent-amber); background: rgba(221, 245, 22, 0.05);">
+            <div style="display:flex; align-items:center; gap: 1rem; color: var(--accent-amber);">
+                <i class="fas fa-lightbulb" style="font-size: 1.5rem;"></i>
+                <span style="font-weight: 500; color: var(--text-primary); font-size: 0.95rem;">${planData.tip}</span>
+            </div>
+        </div>
+    </div>`;
+
+    document.getElementById('workout-plan-output').innerHTML = planHTML;
 }
 
 // ========================================
@@ -698,6 +579,7 @@ function initSidebar() {
         overlay.classList.remove('active');
     });
 
+    // Close sidebar on nav link click (mobile)
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
             if (window.innerWidth <= 768) {
@@ -708,7 +590,7 @@ function initSidebar() {
     });
 }
 
-// ---- Scroll Spy ----
+// ---- Scroll Spy for sidebar active state ----
 
 function initScrollSpy() {
     const sections = document.querySelectorAll('.section');
@@ -730,11 +612,11 @@ function initScrollSpy() {
     sections.forEach(section => observer.observe(section));
 }
 
-// ---- Scroll Reveal ----
+// ---- Scroll Reveal Animations ----
 
 function initScrollReveal() {
     const reveals = document.querySelectorAll('.reveal');
-    const grids = document.querySelectorAll('.stats-grid');
+    const grids = document.querySelectorAll('.stats-grid, .macros-grid');
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -745,7 +627,7 @@ function initScrollReveal() {
         });
     }, {
         threshold: 0.1,
-        rootMargin: '0px 0px -40px 0px'
+        rootMargin: '0px 0px -50px 0px'
     });
 
     reveals.forEach(el => observer.observe(el));
@@ -767,10 +649,12 @@ function initScrollReveal() {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Load user data and run calculations
     loadUserData();
     runCalculations();
     runMacroCalculations();
 
+    // Event listeners
     document.getElementById('user-form').addEventListener('submit', saveUserData);
     document.getElementById('food-form').addEventListener('submit', addFood);
     document.getElementById('food-name').addEventListener('input', autoFillMacros);
@@ -778,7 +662,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('generate-plan-btn').addEventListener('click', generateDietPlan);
     document.getElementById('generate-workout-btn').addEventListener('click', generateWorkoutPlan);
 
+    // UI
     initSidebar();
     initScrollSpy();
     initScrollReveal();
+
+    // Logout
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('isAuthenticated');
+            window.location.href = 'login.html';
+        });
+    }
 });

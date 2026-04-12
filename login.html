@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTrack — Login</title>
+    <meta name="description" content="Sign in to your FitTrack account.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="auth-page">
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+
+    <main class="auth-main">
+        <div class="auth-container glass-card reveal visible">
+            <div class="auth-header">
+                <div class="sidebar-logo auth-logo-center">
+                    <i class="fas fa-bolt"></i>
+                    <span>FitTrack</span>
+                </div>
+                <h2>Welcome Back</h2>
+                <p class="section-subtitle">Sign in to continue your fitness journey</p>
+            </div>
+            
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" value="demo@fittrack.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" value="password123" required>
+                </div>
+                
+                <div class="auth-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember" checked>
+                        <span class="checkmark"></span>
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-pass">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-primary btn-auth">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="#" class="signup-link">Create one</a></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="login.js"></script>
+</body>
+</html>
