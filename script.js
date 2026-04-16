@@ -2,11 +2,6 @@
 // FITTRACK — Script
 // ========================================
 
-// ---- Auth Check ----
-if (localStorage.getItem('isAuthenticated') !== 'true') {
-    window.location.href = 'login.html';
-}
-
 // ---- User Profile: Load / Save ----
 
 function loadUserData() {
@@ -296,56 +291,126 @@ function removeFood(index) {
 // ---- Food Database ----
 
 const foodData = {
+    // 🍞 Grains & Indian Staples
+    'rice': { cal: 130, pro: 2.7, carb: 28.2, fat: 0.3 },
+    'brown rice': { cal: 111, pro: 2.6, carb: 23, fat: 0.9 },
+    'roti': { cal: 120, pro: 3.1, carb: 22, fat: 1.5 },
+    'chapati': { cal: 120, pro: 3.1, carb: 22, fat: 1.5 },
+    'paratha': { cal: 300, pro: 6, carb: 40, fat: 12 },
+    'poha': { cal: 130, pro: 2.5, carb: 28, fat: 1 },
+    'upma': { cal: 150, pro: 4, carb: 26, fat: 3 },
+    'idli': { cal: 58, pro: 2, carb: 12, fat: 0.4 },
+    'dosa': { cal: 168, pro: 4, carb: 30, fat: 3 },
     'rolled oats': { cal: 379, pro: 13.2, carb: 66.3, fat: 6.9 },
-    'apple': { cal: 52, pro: 0.3, carb: 13.8, fat: 0.2 },
-    'banana': { cal: 89, pro: 1.1, carb: 22.8, fat: 0.3 },
-    'papaya': { cal: 43, pro: 0.5, carb: 10.8, fat: 0.3 },
-    'pineapple': { cal: 50, pro: 0.5, carb: 13.1, fat: 0.1 },
-    'grapes': { cal: 69, pro: 0.7, carb: 18.1, fat: 0.2 },
+    'oats': { cal: 379, pro: 13.2, carb: 66.3, fat: 6.9 },
+    'whole wheat bread': { cal: 247, pro: 12.6, carb: 41.3, fat: 3.2 },
+
+    // 🥗 Indian Meals
+    'dal': { cal: 116, pro: 7.6, carb: 20.1, fat: 0.4 },
+    'rajma': { cal: 127, pro: 8.7, carb: 22.8, fat: 0.5 },
+    'chole': { cal: 164, pro: 9, carb: 27, fat: 2.6 },
     'paneer': { cal: 265, pro: 18.3, carb: 3.6, fat: 20.8 },
     'tofu': { cal: 76, pro: 8.1, carb: 1.9, fat: 4.8 },
-    'eggs': { cal: 155, pro: 12.6, carb: 1.1, fat: 10.6 },
-    'dal': { cal: 116, pro: 7.6, carb: 20.1, fat: 0.4 },
-    'rice': { cal: 130, pro: 2.7, carb: 28.2, fat: 0.3 },
-    'whole wheat bread': { cal: 247, pro: 12.6, carb: 41.3, fat: 3.2 },
+    'sabzi': { cal: 90, pro: 2, carb: 10, fat: 5 },
+    'salad': { cal: 15, pro: 1.4, carb: 3.0, fat: 0.2 },
+
+    // 🍎 Fruits
+    'apple': { cal: 52, pro: 0.3, carb: 13.8, fat: 0.2 },
+    'banana': { cal: 89, pro: 1.1, carb: 22.8, fat: 0.3 },
+    'mango': { cal: 60, pro: 0.8, carb: 15, fat: 0.4 },
+    'papaya': { cal: 43, pro: 0.5, carb: 10.8, fat: 0.3 },
+    'orange': { cal: 47, pro: 0.9, carb: 12, fat: 0.1 },
+    'pineapple': { cal: 50, pro: 0.5, carb: 13.1, fat: 0.1 },
+    'grapes': { cal: 69, pro: 0.7, carb: 18.1, fat: 0.2 },
+    'raisins': { cal: 299, pro: 3.1, carb: 79.2, fat: 0.5 },
+    'dates': { cal: 282, pro: 2.5, carb: 75.0, fat: 0.4 },
+
+    // 🥛 Dairy
+    'milk': { cal: 61, pro: 3.2, carb: 4.8, fat: 3.3 },
+    'curd': { cal: 98, pro: 3.5, carb: 4.7, fat: 4.3 },
+    'buttermilk': { cal: 40, pro: 3.3, carb: 4.9, fat: 0.9 },
+    'turmeric milk': { cal: 70, pro: 3.5, carb: 5.5, fat: 3.5 },
+
+    // 🥜 Nuts & Seeds
+    'almonds': { cal: 579, pro: 21.2, carb: 21.6, fat: 49.9 },
+    'peanuts': { cal: 567, pro: 25.8, carb: 16.1, fat: 49.2 },
+    'cashews': { cal: 553, pro: 18.2, carb: 30.2, fat: 43.8 },
     'chia seeds': { cal: 486, pro: 16.5, carb: 42.1, fat: 30.7 },
     'pumpkin seeds': { cal: 446, pro: 18.6, carb: 53.8, fat: 19.4 },
     'sunflower seeds': { cal: 584, pro: 20.8, carb: 20.0, fat: 51.5 },
-    'almonds': { cal: 579, pro: 21.2, carb: 21.6, fat: 49.9 },
-    'raisins': { cal: 299, pro: 3.1, carb: 79.2, fat: 0.5 },
-    'dates': { cal: 282, pro: 2.5, carb: 75.0, fat: 0.4 },
-    'milk': { cal: 61, pro: 3.2, carb: 4.8, fat: 3.3 },
-    'buttermilk': { cal: 40, pro: 3.3, carb: 4.9, fat: 0.9 },
-    'chicken': { cal: 165, pro: 25.0, carb: 0.0, fat: 3.6 },
-    'salad': { cal: 15, pro: 1.4, carb: 3.0, fat: 0.2 },
-    'turmeric milk': { cal: 70, pro: 3.5, carb: 5.5, fat: 3.5 },
+
+    // 🥚 Non-Veg
+    'egg': { cal: 155, pro: 12.6, carb: 1.1, fat: 10.6 },
+    'eggs': { cal: 155, pro: 12.6, carb: 1.1, fat: 10.6 },
+    'chicken': { cal: 165, pro: 25, carb: 0, fat: 3.6 },
+    'fish': { cal: 206, pro: 22, carb: 0, fat: 12 },
+
+    // 🥤 Others
+    'tea': { cal: 40, pro: 1, carb: 5, fat: 1 },
+    'coffee': { cal: 2, pro: 0.3, carb: 0, fat: 0 },
+    'sugar': { cal: 387, pro: 0, carb: 100, fat: 0 },
+    'ghee': { cal: 900, pro: 0, carb: 0, fat: 100 },
+    'oil': { cal: 884, pro: 0, carb: 0, fat: 100 },
     'ashwagandha': { cal: 10, pro: 0.5, carb: 2.0, fat: 0.1 },
     'fish oil': { cal: 40, pro: 0.0, carb: 0.0, fat: 4.5 }
 };
 
-// ---- Auto-fill macros ----
+// ---- Smart Search & Auto-fill macros ----
 
 function autoFillMacros() {
-    const foodName = document.getElementById('food-name').value.toLowerCase().trim();
-    const data = foodData[foodName];
-
-    if (data) {
-        document.getElementById('calories-per-100').value = data.cal;
-        document.getElementById('protein-per-100').value = data.pro;
-        document.getElementById('carbs-per-100').value = data.carb;
-        document.getElementById('fats-per-100').value = data.fat;
-        document.getElementById('fiber-per-100').value = data.fiber || 0;
-        document.getElementById('vitamin-c-per-100').value = data.vitaminC || 0;
-        document.getElementById('iron-per-100').value = data.iron || 0;
-    } else {
-        document.getElementById('calories-per-100').value = '';
-        document.getElementById('protein-per-100').value = '';
-        document.getElementById('carbs-per-100').value = '';
-        document.getElementById('fats-per-100').value = '';
-        document.getElementById('fiber-per-100').value = '';
-        document.getElementById('vitamin-c-per-100').value = '';
-        document.getElementById('iron-per-100').value = '';
+    const input = document.getElementById('food-name').value.toLowerCase().trim();
+    if (!input) {
+        clearMacroFields();
+        return;
     }
+
+    // Priority 1: Exact match
+    if (foodData[input]) {
+        fillMacroFields(foodData[input]);
+        return;
+    }
+
+    // Priority 2: Find best partial / substring match
+    let bestMatch = null;
+    let bestScore = Infinity;
+
+    for (let key in foodData) {
+        // Check if the input is contained in the key or the key is contained in the input
+        if (key.includes(input) || input.includes(key)) {
+            // Score by how close the lengths are (prefer tighter matches)
+            const score = Math.abs(key.length - input.length);
+            if (score < bestScore) {
+                bestScore = score;
+                bestMatch = foodData[key];
+            }
+        }
+    }
+
+    if (bestMatch) {
+        fillMacroFields(bestMatch);
+    } else {
+        clearMacroFields();
+    }
+}
+
+function fillMacroFields(data) {
+    document.getElementById('calories-per-100').value = data.cal;
+    document.getElementById('protein-per-100').value = data.pro;
+    document.getElementById('carbs-per-100').value = data.carb;
+    document.getElementById('fats-per-100').value = data.fat;
+    document.getElementById('fiber-per-100').value = data.fiber || 0;
+    document.getElementById('vitamin-c-per-100').value = data.vitaminC || 0;
+    document.getElementById('iron-per-100').value = data.iron || 0;
+}
+
+function clearMacroFields() {
+    document.getElementById('calories-per-100').value = '';
+    document.getElementById('protein-per-100').value = '';
+    document.getElementById('carbs-per-100').value = '';
+    document.getElementById('fats-per-100').value = '';
+    document.getElementById('fiber-per-100').value = '';
+    document.getElementById('vitamin-c-per-100').value = '';
+    document.getElementById('iron-per-100').value = '';
 }
 
 function calculateRealTimeMacros() {
@@ -666,14 +731,4 @@ document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
     initScrollSpy();
     initScrollReveal();
-
-    // Logout
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('isAuthenticated');
-            window.location.href = 'login.html';
-        });
-    }
 });
